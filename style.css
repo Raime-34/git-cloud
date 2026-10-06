@@ -1,0 +1,92 @@
+body {
+  margin: 0;
+  background-color: #0d1117;
+  color: white;
+  height: 100vh;
+  font-family: "Mona Sans", sans-serif;
+}
+
+.app {
+  padding: 20px;
+  height: 100%;
+  box-sizing: border-box;
+  display: flex;
+}
+
+main {
+  flex: 1;
+  padding-left: 40px;
+  padding-top: 20px;
+}
+
+p {
+  color: inherit;
+  background-color: red;
+}
+
+nav {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  height: calc(100% - 2 * 20px);
+  padding: 20px;
+  border-right: 1px #3d444d solid;
+  flex-shrink: 0;
+}
+
+button {
+  color: inherit;
+  font-family: inherit;
+  background-color: #212830;
+  border-style: solid;
+  border-width: 1px;
+  border-radius: 6px;
+  border-color: #3d444d;
+  padding: 8px 0px;
+  font-weight: 600;
+  width: 85px;
+}
+
+button.red {
+  color: #fa5e55;
+}
+
+button.red:hover {
+  background-color: #fa5e55;
+  color: white;
+}
+
+button:hover {
+  background-color: #262c36;
+  border-color: #3d444d;
+  cursor: pointer;
+}
+
+section {
+  display: none;
+}
+
+section.active {
+  display: block;
+}
+
+input {
+  background-color: #0d1117;
+  border: 1px #3d444d solid;
+  border-radius: 6px;
+  padding: 8px 12px;
+  color: inherit;
+  max-width: 200px;
+}
+
+.buttons-wrapper {
+  box-sizing: content-box;
+  display: flex;
+  gap: 20px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
