@@ -52,3 +52,21 @@ document.getElementById('dir-picker-btn').addEventListener('click', async () => 
 document.getElementById('log-emitter').addEventListener('click', async () => {
     await window.api.log();
 })
+
+async function loadLogs() {
+    let logs = await window.api.getLogs(0, 5);
+    console.log(logs);
+    for (const log of logs) {
+        addLogCard(log);
+    }
+}
+
+function addLogCard(log) {
+    const logInfo = document.getElementById('logs').appendChild(document.createElement('div'));
+    logInfo.classList.add('log-info');
+    logInfo.appendChild(document.createElement('label')).innerText = log.time;
+    logInfo.appendChild(document.createElement('label')).innerText = log.type;
+    logInfo.appendChild(document.createElement('p')).innerText = log.data;
+}
+
+loadLogs();

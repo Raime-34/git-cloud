@@ -3,25 +3,29 @@
 const { app } = require('electron')
 const path = require('path')
 const fs = require('fs');
-const { rejects } = require('assert');
-const { resolve } = require('dns');
+const { logger } = require('./logger');
 
 const configPath = path.join(app.getPath('userData'), 'config.json');
 
 function saveConfig(config) {
-    createConfig(config);
+    return createConfig(config);
 }
 
 function resetConfig() {
-    createConfig();
+    return createConfig();
 }
 
 function createConfig(config = "") {
-    fs.writeFile(configPath, JSON.stringify(config), err => {
-        if (err) {
-            console.log(`[ERROR] [createConfig] ${err}`);
-        }
-    });
+    return new Promise((resolve) => {
+        fs.writeFile(configPath, JSON.stringify(config), err => {
+            const result = {
+                data: err ? null : config,
+                error: err ? err.message : null,
+            }
+            logger.info(JSON.stringify(result))
+            resolve(result)
+        });
+    })
 }
 
 function loadConfig() {

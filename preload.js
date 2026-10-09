@@ -12,5 +12,6 @@ contextBridge.exposeInMainWorld('api', {
 
     dirPicker: () => ipcRenderer.invoke('util:dirPicker'),
 
-    log: () => ipcRenderer.invoke('log')
+    log: () => ipcRenderer.invoke('log'),
+    getLogs: (offset, limit) => ipcRenderer.invoke('logs:get', offset, limit)
 })

@@ -30,13 +30,30 @@ async function init() {
 ipcMain.handle('git:version', () =>  gitVersion())
 ipcMain.handle('git:clone', () => cloneRepo(config.repositoryUrl))
 
-ipcMain.handle('conf:save', (_event, config) => saveConfig(config))
-ipcMain.handle('conf:reset', () => resetConfig())
+ipcMain.handle('conf:save', async (_event, nextConfig) => {
+  const result = await saveConfig(nextConfig)
+  if (!result.error) {
+    config = nextConfig
+  }
+  return result
+})
+ipcMain.handle('conf:reset', async () => {
+  const result = await resetConfig()
+  if (!result.error) {
+    config = ""
+  }
+  return result
+})
 ipcMain.handle('conf:load', () => loadConfig())
 
 ipcMain.handle('util:dirPicker', () => openDirPicker())
 
 ipcMain.handle('log', () => { logger.info('some log')} )
+ipcMain.handle('logs:get', (_event, offset, limit) => logger.getLogs(offset, limit))
+
+app.on('before-quit', (e) => {
+    logger.saveMeta();
+})
 
 app.whenReady().then(() => {
   createWindow()
