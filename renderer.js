@@ -2,12 +2,14 @@
 
 const info = document.getElementById('info')
 const settingsUrl = document.getElementById('settingsUrl')
+const settingsTargetDir = document.getElementById('settingsTargetDir')
 var config
 
 async function init() {
     config = await window.api.loadConfig();
     if (config) {
         settingsUrl.value = config.repositoryUrl;
+        settingsTargetDir.value = config.targetDir;
     }
 }
 init()
@@ -26,7 +28,8 @@ document.querySelectorAll('nav > button').forEach((btn) => {
 document.querySelector('#settings form').addEventListener('submit', (el) => {
     el.preventDefault();
     window.api.saveConfig({
-        repositoryUrl: settingsUrl.value
+        repositoryUrl: settingsUrl.value,
+        targetDir: settingsTargetDir.value
     });
 })
 
@@ -35,7 +38,17 @@ document.querySelector('#settings form').addEventListener('reset', (el) => {
 })
 
 document.getElementById('clone').addEventListener('click', async (el) => {
-    console.log('balls');
     const res = await window.api.cloneRepo();
     console.log(res);
+})
+
+document.getElementById('dir-picker-btn').addEventListener('click', async () => {
+    const path = await window.api.dirPicker();
+    if (path) {
+        settingsTargetDir.value = path;
+    }
+})
+
+document.getElementById('log-emitter').addEventListener('click', async () => {
+    await window.api.log();
 })

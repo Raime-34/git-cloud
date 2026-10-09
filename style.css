@@ -40,11 +40,11 @@ button {
   background-color: #212830;
   border-style: solid;
   border-width: 1px;
-  border-radius: 6px;
+  border-radius: 15px;
   border-color: #3d444d;
-  padding: 8px 0px;
+  padding: 8px 12px;
   font-weight: 600;
-  width: 85px;
+  min-width: 85px;
 }
 
 button.red {
@@ -76,7 +76,7 @@ input {
   border-radius: 6px;
   padding: 8px 12px;
   color: inherit;
-  max-width: 200px;
+  width: 200px;
 }
 
 .buttons-wrapper {
@@ -89,4 +89,9 @@ form {
   display: flex;
   flex-direction: column;
   gap: 20px;
+}
+
+.dir-picker {
+  display: flex;
+  gap: 10px;
 }
