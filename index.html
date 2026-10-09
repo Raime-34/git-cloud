@@ -32,7 +32,7 @@
       <nav>
         <button type="button">Library</button>
         <button type="button">Logs</button>
-        <button type="button">Repository</button>
+        <!-- <button type="button">Repository</button> -->
         <button type="button">Settings</button>
       </nav>
       <main>
@@ -48,6 +48,16 @@
               name="settingsUrl"
               id="settingsUrl"
               placeholder="url of your repository" />
+            <div class="dir-picker">
+              <input
+                type="text"
+                name="settingsTargetDir"
+                readonly
+                id="settingsTargetDir"
+                placeholder="path of local repository" />
+              <button id="dir-picker-btn">Pick directory</button>
+              <button id="log-emitter">Log</button>
+            </div>
             <div class="buttons-wrapper">
               <button
                 type="submit"
