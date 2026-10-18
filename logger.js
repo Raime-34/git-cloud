@@ -71,6 +71,8 @@ const logger = {
         const result = []
         let remainingSkip = offset
 
+        let removedLogs = []
+
         for (const file of files) {
             if (result.length >= limit) break
 
@@ -82,7 +84,16 @@ const logger = {
                 continue
             }
 
-            const content = await fs.promises.readFile(path.join(logsDir, file), 'utf8')
+            const logPath = path.join(logsDir, file)
+            let content
+            try {
+                content = await fs.promises.readFile(logPath, 'utf8')
+            } catch (err) {
+                if (err.code == 'ENOENT') {
+                    removedLogs.push(file)
+                    continue
+                }
+            }
             const lines = content.split(/\r?\n/).filter((line) => line.length > 0)
             // в файле строки от старых к новым → для offset «с самых свежих» разворачиваем
             lines.reverse()
@@ -92,6 +103,11 @@ const logger = {
             const need = limit - result.length
             result.push(...lines.slice(from, from + need).map(parseLogLine))
         }
+
+        removedLogs.forEach(file => {
+            delete this.meta[file]
+        });
+        this.saveMeta()
 
         return result
     }
