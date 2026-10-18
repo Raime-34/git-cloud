@@ -1,44 +1,45 @@
-'use strict'
+"use strict";
 
-const { app } = require('electron')
-const path = require('path')
-const fs = require('fs');
-const { logger } = require('./logger');
+const { app } = require("electron");
+const path = require("path");
+const fs = require("fs");
+const { logger } = require("./logger");
 
-const configPath = path.join(app.getPath('userData'), 'config.json');
+const configPath = path.join(app.getPath("userData"), "config.json");
 
 function saveConfig(config) {
-    return createConfig(config);
+  return createConfig(config);
 }
 
 function resetConfig() {
-    return createConfig();
+  return createConfig();
 }
 
 function createConfig(config = "") {
-    return new Promise((resolve) => {
-        fs.writeFile(configPath, JSON.stringify(config), err => {
-            const result = {
-                data: err ? null : config,
-                error: err ? err.message : null,
-            }
-            logger.info(JSON.stringify(result))
-            resolve(result)
-        });
-    })
+  return new Promise((resolve) => {
+    fs.writeFile(configPath, JSON.stringify(config), (err) => {
+      const result = {
+        data: err ? null : config,
+        error: err ? err.message : null,
+      };
+      logger.info(JSON.stringify(result));
+      resolve(result);
+    });
+  });
 }
 
 function loadConfig() {
-    return new Promise((resolve, reject) => {
-        fs.readFile(configPath, (err, data) => {
-            if (err) {
-                console.log(err);
-                return reject(err);
-            }
-        
-            resolve(JSON.parse(data));
-        })
-    })
+  return new Promise((resolve, reject) => {
+    fs.readFile(configPath, (err, data) => {
+      if (err) {
+        console.log(err);
+        saveConfig();
+        return;
+      }
+
+      resolve(JSON.parse(data));
+    });
+  });
 }
 
-module.exports = { saveConfig, resetConfig, loadConfig }
+module.exports = { saveConfig, resetConfig, loadConfig };
