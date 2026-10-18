@@ -37,20 +37,11 @@ document.querySelector('#settings form').addEventListener('reset', (el) => {
     window.api.resetConfig();
 })
 
-document.getElementById('clone').addEventListener('click', async (el) => {
-    const res = await window.api.cloneRepo();
-    console.log(res);
-})
-
 document.getElementById('dir-picker-btn').addEventListener('click', async () => {
     const path = await window.api.dirPicker();
     if (path) {
         settingsTargetDir.value = path;
     }
-})
-
-document.getElementById('log-emitter').addEventListener('click', async () => {
-    await window.api.log();
 })
 
 async function loadLogs() {
