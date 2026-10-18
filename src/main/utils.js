@@ -1,13 +1,15 @@
-var {dialog} = require('electron');
+var { clipboard, dialog } = require("electron");
 
 async function openDirPicker() {
   const result = await dialog.showOpenDialog({
-    properties: ['openDirectory', 'createDirectory'],
-  })
+    properties: ["openDirectory", "createDirectory"],
+  });
   if (result.canceled || !result.filePaths.length) {
-    return null
+    return null;
   }
-  return result.filePaths[0]
+  return result.filePaths[0];
 }
 
-module.exports = { openDirPicker }
+const getFromClipboard = () => clipboard.readText();
+
+module.exports = { openDirPicker, getFromClipboard };

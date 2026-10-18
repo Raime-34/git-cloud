@@ -1,9 +1,9 @@
-const { app, BrowserWindow, ipcMain } = require('electron')
-const { gitVersion, cloneRepo } = require('./gitHalpers')
-const path = require('path')
-const { saveConfig, resetConfig, loadConfig } = require('./confHalpers');
-const { openDirPicker } = require('./utils');
-const { logger } = require('./logger');
+const { app, BrowserWindow, ipcMain } = require("electron");
+const { gitVersion, cloneRepo } = require("./gitHalpers");
+const path = require("path");
+const { saveConfig, resetConfig, loadConfig } = require("./confHalpers");
+const { openDirPicker, getFromClipboard } = require("./utils");
+const { logger } = require("./logger");
 
 var config;
 
@@ -12,49 +12,54 @@ const createWindow = () => {
     width: 800,
     height: 600,
     webPreferences: {
-        preload: path.join(__dirname, '../preload/preload.js'),
+      preload: path.join(__dirname, "../preload/preload.js"),
     },
-  })
+  });
 
-  init()
-  win.loadFile(path.join(__dirname, '../renderer/index.html'))
-}
+  init();
+  win.loadFile(path.join(__dirname, "../renderer/index.html"));
+};
 
 async function init() {
-    const loadedConfig = await loadConfig();
-    if (loadedConfig) {
-      config = loadedConfig;
-    }
+  const loadedConfig = await loadConfig();
+  if (loadedConfig) {
+    config = loadedConfig;
+  }
 }
 
-ipcMain.handle('git:version', () =>  gitVersion())
-ipcMain.handle('git:clone', () => cloneRepo(config.repositoryUrl))
+ipcMain.handle("git:version", () => gitVersion());
+ipcMain.handle("git:clone", () => cloneRepo(config.repositoryUrl));
 
-ipcMain.handle('conf:save', async (_event, nextConfig) => {
-  const result = await saveConfig(nextConfig)
+ipcMain.handle("conf:save", async (_event, nextConfig) => {
+  const result = await saveConfig(nextConfig);
   if (!result.error) {
-    config = nextConfig
+    config = nextConfig;
   }
-  return result
-})
-ipcMain.handle('conf:reset', async () => {
-  const result = await resetConfig()
+  return result;
+});
+ipcMain.handle("conf:reset", async () => {
+  const result = await resetConfig();
   if (!result.error) {
-    config = ""
+    config = "";
   }
-  return result
-})
-ipcMain.handle('conf:load', () => loadConfig())
+  return result;
+});
+ipcMain.handle("conf:load", () => loadConfig());
 
-ipcMain.handle('util:dirPicker', () => openDirPicker())
+ipcMain.handle("util:dirPicker", () => openDirPicker());
+ipcMain.handle("util:clipboard", () => getFromClipboard());
 
-ipcMain.handle('log', () => { logger.info('some log')} )
-ipcMain.handle('logs:get', (_event, offset, limit) => logger.getLogs(offset, limit))
+ipcMain.handle("log", () => {
+  logger.info("some log");
+});
+ipcMain.handle("logs:get", (_event, offset, limit) =>
+  logger.getLogs(offset, limit),
+);
 
-app.on('before-quit', (e) => {
-    logger.saveMeta();
-})
+app.on("before-quit", (e) => {
+  logger.saveMeta();
+});
 
 app.whenReady().then(() => {
-  createWindow()
-})
+  createWindow();
+});
