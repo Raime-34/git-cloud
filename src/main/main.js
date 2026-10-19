@@ -1,9 +1,10 @@
 const { app, BrowserWindow, ipcMain } = require("electron");
-const { gitVersion, cloneRepo } = require("./gitHalpers");
+const { gitVersion, cloneRepo } = require("./gitHelpers");
 const path = require("path");
-const { saveConfig, resetConfig, loadConfig } = require("./confHalpers");
+const { saveConfig, resetConfig, loadConfig } = require("./confHelpers");
 const { openDirPicker, getFromClipboard } = require("./utils");
 const { logger } = require("./logger");
+const { getInstalledGames } = require("./steamHelpers");
 
 var config;
 
