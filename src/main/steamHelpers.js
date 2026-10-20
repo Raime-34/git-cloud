@@ -6,83 +6,107 @@ const https = require("node:https");
 const fetchNumberLimits = 100;
 const steamStoreUrl = "store.steampowered.com";
 
-/**
- * Возвращает информацию об установленных играх
- * @param steamPath Путь к директории Steam'а
- */
-function getInstalledGames(steamPath) {
-  return new Promise((resolve, reject) => {
-    let gamesInfo = [];
+const steamHandler = {
+  installedGames: [],
 
-    // libraryfolders.vdf содержит инфу о установленных играх
-    fs.readFile(
-      path.join(steamPath, "steamapps/libraryfolders.vdf"),
-      "utf8",
-      (err, data) => {
-        if (err) {
-          console.log(err);
-          reject(err);
-          return;
-        }
+  setSteamPath(steamPath) {
+    this.steamPath = steamPath;
+  },
 
-        const parsedData = vdf.parse(data);
-        let counter = 0;
-        let pending = 0;
+  /**
+   * Подтягивает, эширует и возвращает информацию об установленных играх
+   */
+  loadInstalledGames() {
+    return new Promise((resolve, reject) => {
+      if (!this.steamPath) {
+        reject(new Error("Steam directory is not set"));
+      }
 
-        // проходим по кажлому директории в которой стим хранит игры
-        loop: for (const [key, rootFolder] of Object.entries(
-          parsedData.libraryfolders,
-        )) {
-          // по кажлой игре
-          for (const [appId, weigth] of Object.entries(rootFolder.apps)) {
-            pending++;
+      let gamesInfo = [];
 
-            // делаем запрос в их api для получения инфы об игре из магазина
-            https
-              .get(
-                {
-                  hostname: steamStoreUrl,
-                  path: `/api/appdetails?appids=${appId}`,
-                },
-                (res) => {
-                  res.setEncoding("utf-8");
-                  let body = "";
+      // libraryfolders.vdf содержит инфу о установленных играх
+      fs.readFile(
+        path.join(this.steamPath, "steamapps/libraryfolders.vdf"),
+        "utf8",
+        (err, data) => {
+          if (err) {
+            console.log(err);
+            reject(err);
+            return;
+          }
 
-                  res.on("data", (chunk) => {
-                    body += chunk;
-                  });
+          const parsedData = vdf.parse(data);
+          let counter = 0;
+          let pending = 0;
 
-                  res.on("end", () => {
-                    const parsed = JSON.parse(body);
-                    if (parsed[appId].success) {
-                      gamesInfo.push({
-                        name: parsed[appId].data.name,
-                        genres: parsed[appId].data.genres,
-                      });
-                    }
+          // проходим по кажлому директории в которой стим хранит игры
+          loop: for (const [key, rootFolder] of Object.entries(
+            parsedData.libraryfolders,
+          )) {
+            // по кажлой игре
+            for (const [appId, weigth] of Object.entries(rootFolder.apps)) {
+              pending++;
 
-                    if (--pending == 0) {
-                      resolve(gamesInfo);
-                    }
-                  });
-                },
-              )
-              .on("error", (error) => {
-                console.error(error);
-              });
+              // делаем запрос в их api для получения инфы об игре из магазина
+              https
+                .get(
+                  {
+                    hostname: steamStoreUrl,
+                    path: `/api/appdetails?appids=${appId}`,
+                  },
+                  (res) => {
+                    res.setEncoding("utf-8");
+                    let body = "";
 
-            if (++counter >= fetchNumberLimits) {
-              break loop;
+                    res.on("data", (chunk) => {
+                      body += chunk;
+                    });
+
+                    res.on("end", () => {
+                      const parsed = JSON.parse(body);
+                      if (parsed[appId].success) {
+                        gamesInfo.push({
+                          name: parsed[appId].data.name,
+                          genres: parsed[appId].data.genres,
+                        });
+                      }
+
+                      if (--pending == 0) {
+                        this.installedGames = gamesInfo;
+                        resolve(gamesInfo);
+                      }
+                    });
+                  },
+                )
+                .on("error", (error) => {
+                  console.error(error);
+                });
+
+              if (++counter >= fetchNumberLimits) {
+                break loop;
+              }
             }
           }
-        }
 
-        if (pending == 0) {
-          resolve(gamesInfo);
-        }
-      },
-    );
-  });
-}
+          if (pending == 0) {
+            this.installedGames = gamesInfo;
+            resolve(gamesInfo);
+          }
+        },
+      );
+    });
+  },
 
-module.exports = { getInstalledGames };
+  /**
+   * Возвращает кэшированную информацию
+   */
+  getInstalledGames() {
+    if (!this.steamPath) {
+      throw new Error("Steam directory is not set");
+    }
+
+    return this.installedGames;
+  },
+};
+
+module.exports = { steamHandler };

@@ -10,6 +10,8 @@ contextBridge.exposeInMainWorld("api", {
   resetConfig: () => ipcRenderer.invoke("conf:reset"),
   loadConfig: () => ipcRenderer.invoke("conf:load"),
 
+  getInstalledGames: () => ipcRenderer.invoke("steam:getGames"),
+
   dirPicker: () => ipcRenderer.invoke("util:dirPicker"),
   getFromClipboard: () => ipcRenderer.invoke("util:clipboard"),
 

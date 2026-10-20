@@ -4,11 +4,11 @@ const path = require("path");
 const { saveConfig, resetConfig, loadConfig } = require("./confHelpers");
 const { openDirPicker, getFromClipboard } = require("./utils");
 const { logger } = require("./logger");
-const { getInstalledGames } = require("./steamHelpers");
+const { steamHandler } = require("./steamHelpers");
 
 var config;
 
-const createWindow = () => {
+async function createWindow() {
   const win = new BrowserWindow({
     width: 800,
     height: 600,
@@ -17,14 +17,16 @@ const createWindow = () => {
     },
   });
 
-  init();
+  await init();
   win.loadFile(path.join(__dirname, "../renderer/index.html"));
-};
+}
 
 async function init() {
   const loadedConfig = await loadConfig();
   if (loadedConfig) {
     config = loadedConfig;
+    steamHandler.setSteamPath(loadedConfig.steamDir);
+    steamHandler.loadInstalledGames();
   }
 }
 
@@ -47,6 +49,8 @@ ipcMain.handle("conf:reset", async () => {
 });
 ipcMain.handle("conf:load", () => loadConfig());
 
+ipcMain.handle("steam:getGames", () => steamHandler.getInstalledGames());
+
 ipcMain.handle("util:dirPicker", () => openDirPicker());
 ipcMain.handle("util:clipboard", () => getFromClipboard());
 
@@ -61,6 +65,6 @@ app.on("before-quit", (e) => {
   logger.saveMeta();
 });
 
-app.whenReady().then(() => {
-  createWindow();
+app.whenReady().then(async () => {
+  await createWindow();
 });

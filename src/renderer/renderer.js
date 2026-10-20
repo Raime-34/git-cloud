@@ -5,6 +5,7 @@ const settingsUrl = document.getElementById("settingsUrl");
 const settingsTargetDir = document.getElementById("settingsTargetDir");
 const settingsSteamDir = document.getElementById("settingsSteamPath");
 var config;
+var cachedSteamInfo = [];
 
 async function init() {
   config = await window.api.loadConfig();
@@ -12,6 +13,9 @@ async function init() {
     settingsUrl.value = config.repositoryUrl;
     settingsTargetDir.value = config.targetDir;
     settingsSteamDir.value = config.steamDir;
+
+    loadLogs();
+    loadGames();
   }
 }
 init();
@@ -85,4 +89,28 @@ function addLogCard(log) {
   logInfo.appendChild(document.createElement("p")).innerText = log.data;
 }
 
-loadLogs();
+var gameInfoCheckerInterval;
+async function loadGames() {
+  if (!gameInfoCheckerInterval) {
+    gameInfoCheckerInterval = setInterval(async () => {
+      cachedSteamInfo = await window.api.getInstalledGames();
+
+      if (cachedSteamInfo.length == 0) {
+        return;
+      }
+
+      clearInterval(gameInfoCheckerInterval);
+      cachedSteamInfo.forEach((game) => {
+        addGameCard(game);
+      });
+    }, 2000);
+  }
+}
+
+function addGameCard(game) {
+  const gameInfo = document
+    .getElementById("library")
+    .appendChild(document.createElement("div"));
+
+  gameInfo.appendChild(document.createElement("label")).innerText = game.name;
+}
