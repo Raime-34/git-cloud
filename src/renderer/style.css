@@ -31,7 +31,7 @@ nav {
   flex-shrink: 0;
 }
 
-button {
+.text-button {
   color: inherit;
   font-family: inherit;
   background-color: #212830;
@@ -44,16 +44,16 @@ button {
   min-width: 85px;
 }
 
-button.red {
+.text-button.red {
   color: #fa5e55;
 }
 
-button.red:hover {
+.text-button.red:hover {
   background-color: #fa5e55;
   color: white;
 }
 
-button:hover {
+.text-button:hover {
   background-color: #262c36;
   border-color: #3d444d;
   cursor: pointer;
@@ -131,4 +131,25 @@ main {
   border: 1px #3d444d solid;
   border-radius: 10px;
   padding: 5px 10px;
+}
+
+.icon-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #212830;
+  border-style: solid;
+  border-width: 1px;
+  border-color: #3d444d;
+}
+
+#library-reload-btn path,
+#library-reload-btn svg * {
+  fill: white;
+  stroke: white;
+}
+
+.section-header {
+  display: flex;
+  justify-content: flex-end;
 }

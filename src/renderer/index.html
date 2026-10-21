@@ -7,8 +7,8 @@
       http-equiv="Content-Security-Policy"
       content="
       default-src 'self'; 
-      script-src 'self';
-      style-src 'self' https://fonts.googleapis.com;
+      script-src 'self' https://cdnjs.cloudflare.com;
+      style-src 'self' https://fonts.googleapis.com https://cdnjs.com1;
       font-src 'self' https://fonts.gstatic.com;
       img-src 'self' https://shared.akamai.steamstatic.com;
       " />
@@ -31,16 +31,30 @@
   <body>
     <div class="app">
       <nav>
-        <button type="button">Library</button>
-        <button type="button">Logs</button>
-        <button type="button">Settings</button>
+        <button
+          class="text-button"
+          type="button">
+          Library
+        </button>
+        <button
+          class="text-button"
+          type="button">
+          Logs
+        </button>
+        <button
+          class="text-button"
+          type="button">
+          Settings
+        </button>
       </nav>
       <main>
         <section
           id="library"
           class="active">
           <div class="section-header">
-            <button id="library-reload-btn"></button>
+            <button
+              id="library-reload-btn"
+              class="icon-btn"></button>
           </div>
           <div
             id="library-body"
@@ -56,7 +70,11 @@
                 readonly
                 id="settingsSteamPath"
                 placeholder="path of your Steam folder" />
-              <button id="steam-dir-picker">Browse</button>
+              <button
+                class="text-button"
+                id="steam-dir-picker">
+                Browse
+              </button>
             </div>
             <div class="dir-picker">
               <input
@@ -65,7 +83,11 @@
                 readonly
                 id="settingsUrl"
                 placeholder="url of your repository" />
-              <button id="repo-paste-btn">Paste</button>
+              <button
+                class="text-button"
+                id="repo-paste-btn">
+                Paste
+              </button>
             </div>
             <div class="dir-picker">
               <input
@@ -74,16 +96,21 @@
                 readonly
                 id="settingsTargetDir"
                 placeholder="path of local repository" />
-              <button id="dir-picker-btn">Browse</button>
+              <button
+                class="text-button"
+                id="dir-picker-btn">
+                Browse
+              </button>
             </div>
             <div class="buttons-wrapper">
               <button
+                class="text-button"
                 type="submit"
                 id="settingsSaveBtn">
                 Save
               </button>
               <button
-                class="red"
+                class="text-button red"
                 type="reset"
                 id="settingsResetBtn">
                 Reset
@@ -94,5 +121,8 @@
       </main>
     </div>
   </body>
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.13.0/lottie.min.js"
+    type="text/javascript"></script>
   <script src="renderer.js"></script>
 </html>

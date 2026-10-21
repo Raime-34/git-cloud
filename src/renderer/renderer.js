@@ -24,7 +24,7 @@ document.querySelectorAll("nav > button").forEach((btn) => {
   btn.addEventListener("click", () => {
     document.querySelectorAll("main section").forEach((section) => {
       section.classList.remove("active");
-      if (btn.textContent.toLowerCase() == section.id) {
+      if (btn.textContent.toLowerCase().trim() == section.id) {
         section.classList.add("active");
       }
     });
@@ -135,3 +135,12 @@ function addGameCard(game) {
     });
   } 
 }
+
+var animation = bodymovin.loadAnimation({
+  container: document.getElementById('library-reload-btn'), // Required
+  path: './../../icons8-refresh.json', // Required
+  renderer: 'svg', // Required
+  loop: true, // Optional
+  autoplay: true, // Optional
+  name: "Hello World", // Name for future reference. Optional.
+})
