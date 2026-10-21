@@ -108,9 +108,30 @@ async function loadGames() {
 }
 
 function addGameCard(game) {
-  const gameInfo = document
-    .getElementById("library")
+  const gameCard = document
+    .getElementById("library-body")
     .appendChild(document.createElement("div"));
+  gameCard.classList.add("game-card");
 
-  gameInfo.appendChild(document.createElement("label")).innerText = game.name;
+  const gameImage = gameCard.appendChild(document.createElement("img"));
+  gameImage.src = game.image;
+  gameImage.classList.add("game-card-img");
+
+  const gameInfo = gameCard.appendChild(document.createElement("div"));
+  gameInfo.classList.add("game-card-info");
+
+  const gameLabel = gameInfo.appendChild(document.createElement("label"));
+  gameLabel.classList.add("game-card-label");
+  gameLabel.innerText = game.name;
+
+  if (game.genres.length > 0) {
+    const genresWrapper = gameInfo.appendChild(document.createElement("div"));
+    genresWrapper.classList.add("game-card-generes-wrapper");
+
+    game.genres.forEach(genre => {
+        const genreCard = genresWrapper.appendChild(document.createElement("span"))
+        genreCard.classList.add("game-card-generes-wrapper-genre");
+        genreCard.innerText = genre.description;
+    });
+  } 
 }

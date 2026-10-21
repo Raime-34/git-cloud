@@ -65,9 +65,11 @@ const steamHandler = {
                     res.on("end", () => {
                       const parsed = JSON.parse(body);
                       if (parsed[appId].success) {
+                        const data = parsed[appId].data;
                         gamesInfo.push({
-                          name: parsed[appId].data.name,
-                          genres: parsed[appId].data.genres,
+                          name: data.name,
+                          genres: data.genres,
+                          image: data.capsule_image,
                         });
                       }
 
