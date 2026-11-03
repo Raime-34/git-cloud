@@ -8,7 +8,7 @@ var config;
 var cachedSteamInfo = [];
 
 async function init() {
-  config = await window.api.loadConfig();
+  config = await window.api.getConfig();
   if (config) {
     settingsUrl.value = config.repositoryUrl;
     settingsTargetDir.value = config.targetDir;
@@ -38,6 +38,9 @@ document.querySelector("#settings form").addEventListener("submit", (el) => {
     targetDir: settingsTargetDir.value,
     steamDir: settingsSteamDir.value,
   });
+
+  if (repositoryUrl && targetDir) {
+  }
 });
 
 document.querySelector("#settings form").addEventListener("reset", (el) => {
@@ -100,9 +103,11 @@ async function loadGames() {
       }
 
       clearInterval(gameInfoCheckerInterval);
-      cachedSteamInfo.forEach((game) => {
-        addGameCard(game);
-      });
+      cachedSteamInfo
+        .sort((a, b) => a.name.localeCompare(b.name))
+        .forEach((game) => {
+          addGameCard(game);
+        });
     }, 2000);
   }
 }
@@ -120,27 +125,81 @@ function addGameCard(game) {
   const gameInfo = gameCard.appendChild(document.createElement("div"));
   gameInfo.classList.add("game-card-info");
 
+  const isTrackingBadge = gameInfo.appendChild(document.createElement("span"));
+  isTrackingBadge.innerText =
+    config.gameInfo &&
+    config.gameInfo[game.appId] &&
+    config.gameInfo[game.appId].path &&
+    config.gameInfo[game.appId].isTracked
+      ? "Tracked"
+      : "Not tracked";
+
   const gameLabel = gameInfo.appendChild(document.createElement("label"));
   gameLabel.classList.add("game-card-label");
   gameLabel.innerText = game.name;
 
-  if (game.genres.length > 0) {
+  if (game.genres && game.genres.length > 0) {
     const genresWrapper = gameInfo.appendChild(document.createElement("div"));
-    genresWrapper.classList.add("game-card-generes-wrapper");
+    genresWrapper.classList.add("game-card-genres-wrapper");
 
-    game.genres.forEach(genre => {
-        const genreCard = genresWrapper.appendChild(document.createElement("span"))
-        genreCard.classList.add("game-card-generes-wrapper-genre");
-        genreCard.innerText = genre.description;
+    game.genres.forEach((genre) => {
+      const genreCard = genresWrapper.appendChild(
+        document.createElement("span"),
+      );
+      genreCard.classList.add("game-card-generes-wrapper-genre");
+      genreCard.innerText = genre.description;
     });
-  } 
+  }
+  var pathLabel;
+  if (config.gameInfo[game.appId]) {
+    pathLabel = gameInfo.appendChild(document.createElement("label"));
+    pathLabel.innerText = `Save folder: ${config.gameInfo[game.appId].path}`;
+  }
+
+  const gameControllerWrapper = gameCard.appendChild(
+    document.createElement("div"),
+  );
+
+  const gameFolderPicker = gameControllerWrapper.appendChild(
+    document.createElement("button"),
+  );
+  gameFolderPicker.classList.add("icon-btn");
+  gameFolderPicker.addEventListener("click", async () => {
+    const path = await window.api.dirPicker();
+    if (path) {
+      game.dir = path;
+
+      ((config.gameInfo ??= {})[game.appId] ??= {}).path = path;
+      if (!pathLabel) {
+        pathLabel = gameInfo.appendChild(document.createElement("label"));
+      }
+      pathLabel.innerText = `Save folder: ${path}`;
+      window.api.saveConfig(config);
+    }
+  });
+
+  const isManagedSwitch = gameControllerWrapper.appendChild(
+    document.createElement("input"),
+  );
+  isManagedSwitch.type = "checkbox";
+  isManagedSwitch.checked =
+    config.gameInfo &&
+    config.gameInfo[game.appId] &&
+    config.gameInfo[game.appId].isTracked
+      ? config.gameInfo[game.appId].isTracked
+      : false;
+  isManagedSwitch.addEventListener("change", () => {
+    ((config.gameInfo ??= {})[game.appId] ??= {}).isTracked =
+      isManagedSwitch.checked;
+    window.api.saveConfig(config);
+  });
 }
 
 var animation = bodymovin.loadAnimation({
-  container: document.getElementById('library-reload-btn'), // Required
-  path: './../../icons8-refresh.json', // Required
-  renderer: 'svg', // Required
+  container: document.getElementById("library-reload-btn"), // Required
+  path: "./../../icons8-refresh.json", // Required
+  renderer: "svg", // Required
   loop: true, // Optional
   autoplay: true, // Optional
   name: "Hello World", // Name for future reference. Optional.
-})
+});

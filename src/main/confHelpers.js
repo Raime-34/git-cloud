@@ -6,9 +6,18 @@ const fs = require("fs");
 const { logger } = require("./logger");
 
 const configPath = path.join(app.getPath("userData"), "config.json");
+var config;
 
-function saveConfig(config) {
+function saveConfig(newCfg) {
+  for (const [key, value] of Object.entries(newCfg)) {
+    config[key] = value;
+  }
+
   return createConfig(config);
+}
+
+function getConfig() {
+  return config;
 }
 
 function resetConfig() {
@@ -37,9 +46,10 @@ function loadConfig() {
         return;
       }
 
-      resolve(JSON.parse(data));
+      config = JSON.parse(data);
+      resolve(config);
     });
   });
 }
 
-module.exports = { saveConfig, resetConfig, loadConfig };
+module.exports = { saveConfig, resetConfig, loadConfig, getConfig };

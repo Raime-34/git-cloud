@@ -9,6 +9,7 @@ contextBridge.exposeInMainWorld("api", {
   saveConfig: (config) => ipcRenderer.invoke("conf:save", config),
   resetConfig: () => ipcRenderer.invoke("conf:reset"),
   loadConfig: () => ipcRenderer.invoke("conf:load"),
+  getConfig: () => ipcRenderer.invoke("conf:get"),
 
   getInstalledGames: () => ipcRenderer.invoke("steam:getGames"),
 

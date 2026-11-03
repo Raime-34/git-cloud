@@ -1,7 +1,12 @@
 const { app, BrowserWindow, ipcMain } = require("electron");
 const { gitVersion, cloneRepo } = require("./gitHelpers");
 const path = require("path");
-const { saveConfig, resetConfig, loadConfig } = require("./confHelpers");
+const {
+  saveConfig,
+  resetConfig,
+  loadConfig,
+  getConfig,
+} = require("./confHelpers");
 const { openDirPicker, getFromClipboard } = require("./utils");
 const { logger } = require("./logger");
 const { steamHandler } = require("./steamHelpers");
@@ -48,6 +53,7 @@ ipcMain.handle("conf:reset", async () => {
   return result;
 });
 ipcMain.handle("conf:load", () => loadConfig());
+ipcMain.handle("conf:get", () => getConfig());
 
 ipcMain.handle("steam:getGames", () => steamHandler.getInstalledGames());
 
